@@ -1,0 +1,253 @@
+@import url(reset.css);
+
+body {
+    background-color: #7b3106e6;
+    justify-content: center;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+}
+main {
+  text-align: center;
+}
+
+h1 {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: white;
+  
+}
+
+.jogo {
+  padding: 1rem;
+  margin: auto;
+  margin-top: 30px;
+  margin-bottom: 30px;
+  background-color: #8e5f4200;
+  transform-style: preserve-3d;
+  perspective: 500px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 80%;
+}
+
+.item {
+  font-size: 6rem;
+  margin: 2rem;
+  position: relative;
+  width: 200px;
+  height: 250px;
+  background-image: url("../imagens/wall.png");
+  backface-visibility: hidden;
+  background-size: cover;
+  transform: rotateY(0deg);
+  transition: 0.25s;
+}
+
+.item.virarNoComeco {
+  text-align: center;
+  font-size: 6rem;
+  margin: 2rem;
+  position: relative;
+  width: 200px;
+  height: 250px;
+  justify-content: center;
+  justify-items: center;
+  align-items: center;
+  background-image: url("../imagens/wall-titulo.png");
+  background-size: cover;
+  transform: rotateY(180deg);
+  backface-visibility: visible;
+}
+
+.item.virarNoComeco::after {
+  content: "";
+  inset: 0;
+  position: absolute;
+  background-image: url("../imagens/wall-titulo.png");
+  background-size: cover;
+  transition: 0.25s;
+  transform: rotateY(0deg);
+  backface-visibility: hidden;
+}
+
+.item.virado {
+  transform: rotateY(0deg);
+}
+
+.item.virado::after {
+  transform: rotateY(180deg);
+}
+
+.item.Match{
+  transform: rotateY(180deg);
+}
+
+.item.emogiMal {
+  transform: rotateY(180deg);
+  background-image: url("../imagens/mal.png");
+  background-size: cover;
+}
+
+.item.presente {
+  transform: rotateY(180deg);
+  background-image: url("../imagens/presente.png");
+  background-size: cover;
+}
+
+.item.rocha {
+  transform: rotateY(180deg);
+  background-image: url("../imagens/rocha.png");
+  background-size: cover;
+}
+
+.reset {
+  background-color: #ee2727;
+  border: #5c1717 2px solid;
+  color: white;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+#h1 {
+  justify-content: center;
+  display: flex;
+  text-align: center;
+  align-items: center;
+  background-image: url("../imagens/wall-titulo.png");
+  background-size: contain;
+  height: 10rem;
+  margin: auto;
+}
+
+#coracao1
+ {
+  top: 20px;
+  left: 20px;
+}
+
+#coracao2 {
+  top: 20px;
+  left: 140px;
+}
+
+#coracao3 {
+  top: 20px;
+  left: 260px;
+}
+
+#coracao4 {
+  top: 20px;
+  left: 380px;
+}
+
+.quebrado {
+  width: 100px;
+  height: 100px;
+  background-image: url("../imagens/Heart-broken.png");
+  background-size: cover;
+  position: fixed;
+  z-index: 1000;
+
+}
+
+.coracao {
+  width: 100px;
+  height: 100px;
+  background-image: url("../imagens/Heart.png");
+  background-size: cover;
+  position: fixed;
+  z-index: 1000;
+}
+
+#morte.mensagem {
+  position: fixed;      /* Fica fixo na tela */
+  top: 50%;             /* 50% da altura da tela */
+  left: 50%;            /* 50% da largura da tela */
+  transform: translate(-50%, -50%); /* Move o elemento de volta metade da largura e altura */
+  background: rgba(0, 0, 0, 0.8);  /* Fundo escuro com transparência */
+  color: white;         /* Cor do texto */
+  padding: 2rem;        /* Espaço interno */
+  border-radius: 10px;  /* Cantos arredondados */
+  font-size: 2rem;      /* Tamanho do texto */
+  text-align: center;   /* Centraliza o texto dentro da caixa */
+  z-index: 1000;
+}
+
+#item1 {
+  top: 20px;
+  right: 20px;
+}
+
+#item2 {
+  top: 140px;
+  right: 20px;
+}
+
+#item3 {
+  top: 260px;
+  right: 20px;
+}
+
+#item4 {
+  top: 380px;
+  right: 20px;
+}
+
+#item5 {
+  top: 500px;
+  right: 20px;
+}
+
+.lupa {
+  width: 100px;
+  height: 100px;
+  background-image: url("../imagens/lupa.png");
+  background-size: cover;
+  border: #0f0f0f 2px solid;
+  position: fixed;
+  z-index: 1000;
+  cursor: pointer;
+}
+
+.consertar {
+  width: 100px;
+  height: 100px;
+  background-image: url("../imagens/consertar.png");
+  background-size: cover;
+  border: #05070f 2px solid;
+  position: fixed;
+  z-index: 1000;
+  cursor: pointer;
+}
+
+.infecsão {
+  width: 100px;
+  height: 100px;
+  background-image: url("../imagens/infecsão.png");
+  background-size: cover;
+  border: #100505 2px solid;
+  position: fixed;
+  z-index: 1000;
+  cursor: pointer;
+}
+
+.infectado {
+  width: 100px;
+  height: 100px;
+  background-image: url("../imagens/Heart-infectado.png");
+  background-size: cover;
+  position: fixed;
+  z-index: 1000;
+}
+
+.item.lupaAtivo {
+  transform: rotateY(0deg);
+}
+
+.item.lupaAtivo::after {
+  transform: rotateY(180deg);
+}

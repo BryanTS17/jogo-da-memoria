@@ -32,6 +32,20 @@ h1 {
   width: 80%;
 }
 
+.jogo.espandirJogo {
+  width: 100%;
+  padding: 1rem;
+  margin: auto;
+  margin-top: 30px;
+  margin-bottom: 30px;
+  background-color: #8e5f4200;
+  transform-style: preserve-3d;
+  perspective: 500px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
 .item {
   font-size: 6rem;
   margin: 2rem;
@@ -45,13 +59,23 @@ h1 {
   transition: 0.25s;
 }
 
+.item.cartaMenorMedia {
+  width: 150px;
+  height: 200px;
+  font-size: 5.5rem;
+  margin: 1.25rem;
+}
+
+.item.cartaMenorPouco {
+  width: 175px;
+  height: 250px;
+  font-size: 5.5rem;
+  margin: 1.5rem;
+}
+
 .item.virarNoComeco {
   text-align: center;
-  font-size: 6rem;
-  margin: 2rem;
   position: relative;
-  width: 200px;
-  height: 250px;
   justify-content: center;
   justify-items: center;
   align-items: center;
@@ -90,6 +114,12 @@ h1 {
   background-size: cover;
 }
 
+.item.lanpada {
+  transform: rotateY(180deg);
+  background-image: url("../imagens/lanpada.png");
+  background-size: cover;
+}
+
 .item.presente {
   transform: rotateY(180deg);
   background-image: url("../imagens/presente.png");
@@ -101,6 +131,28 @@ h1 {
   background-image: url("../imagens/rocha.png");
   background-size: cover;
 }
+
+.item.cartaContaminada {
+  transform: rotateY(180deg);
+  background-image: url("../imagens/carta-com-virus.png");
+  background-size: cover;
+  border: #070f05 2px solid;
+  opacity: 0.5;
+}
+
+.item.cartaVirus {
+  transform: rotateY(360deg);
+  background-image: url("../imagens/virus.png");
+  background-size: cover;
+  border: #050f05 2px solid;
+}
+
+.item.olhoMagico {
+  transform: rotateY(180deg);
+  background-image: url("../imagens/olho-magico.png");
+  background-size: cover;
+}
+
 
 .reset {
   background-color: #ee2727;
@@ -144,6 +196,16 @@ h1 {
   left: 380px;
 }
 
+#coracao5 {
+  top: 20px;
+  left: 500px;
+}
+
+#coracao6 {
+  top: 20px;
+  left: 620px;
+}
+
 .quebrado {
   width: 100px;
   height: 100px;
@@ -178,27 +240,50 @@ h1 {
 }
 
 #item1 {
+  position: fixed;
   top: 20px;
   right: 20px;
 }
 
 #item2 {
+  position: fixed;
   top: 140px;
   right: 20px;
 }
 
 #item3 {
+  position: fixed;
   top: 260px;
   right: 20px;
 }
 
 #item4 {
+  position: fixed;
   top: 380px;
   right: 20px;
 }
 
 #item5 {
+  position: fixed;
   top: 500px;
+  right: 20px;
+}
+
+#item6 {
+  position: fixed;
+  top: 620px;
+  right: 20px;
+}
+
+#item7 {
+  position: fixed;
+  top: 740px;
+  right: 20px;
+}
+
+#item8 {
+  position: fixed;
+  top: 860px;
   right: 20px;
 }
 
@@ -235,6 +320,17 @@ h1 {
   cursor: pointer;
 }
 
+.transparencia {
+  width: 100px;
+  height: 100px;
+  background-image: url("../imagens/magia-transparencia.png");
+  background-size: cover;
+  border: #100505 2px solid;
+  position: fixed;
+  z-index: 1000;
+  cursor: pointer;
+}
+
 .infectado {
   width: 100px;
   height: 100px;
@@ -251,3 +347,20 @@ h1 {
 .item.lupaAtivo::after {
   transform: rotateY(180deg);
 }
+
+.transparente {
+  background-image: url(../imagens/wall-titulo.png);
+}
+
+.transparente::after {
+  content: "";
+  inset: 0;
+  position: absolute;
+  background-image: url(../imagens/wall-titulo.png);
+  background-size: cover;
+  transition: 0.5s;
+  transform: rotateY(0deg);
+  backface-visibility: hidden;
+  opacity: 0.8;
+}
+

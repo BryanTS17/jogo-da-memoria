@@ -13,9 +13,11 @@ let emogis = [
   "🧐",
 ];
 
-let listaItens = [0, 0, 0, 0, 0, 0];
+let listaItens = [0, 0, 0, 0, 0, 0, 0, 0];
 
 let fase = 1;
+let paraGanhar = 0; // Número de pares necessários para ganhar a fase
+let PontosGerarItem = 2; // Número de pontos necessários para gerar um item
 
 let vidaInfectada = 0;
 let vida = 3;
@@ -23,6 +25,7 @@ let vidaMax = vida;
 let pontos = 0;
 let match = 0;
 let matchPonto = 0;
+let pontoLanpada = 0;
 let emogiMal = 0;
 
 let emogiOpen = [];
@@ -46,18 +49,70 @@ iniciar();
 
 function iniciar() {
   if (fase === 1) {
+    paraGanhar = 6; // Define o número de pares necessários para ganhar a fase 1
     emogis.push("👿", "👹"); // Adiciona emogis ruins na fase 1
   }
   if (fase === 2) {
+    paraGanhar = 6; // Define o número de pares necessários para ganhar a fase 2
     emogis.push("👺", "🤬", "😈"); // Adiciona mais emogis ruins na fase 2
     emogis.push("😏", "😏", "🙄", "🙄", "😛", "😛"); // Adiciona mais emogis divertidos na fase 2
     emogis = emogis.filter((emogi) => emogi !== "😍");
   }
   if (fase === 3) {
+    document.getElementsByClassName("jogo")[0].classList.add("espandirJogo");
+    // document.querySelector(".jogo").classList.add("espandirJogo"); essa linha também funciona e é mais comum
+    paraGanhar = 8; // Define o número de pares necessários para ganhar a fase 3
     emogis.push("🗿", "🗿", "👹");
-    emogis.push("🎁", "😶", "😶", "😑", "😑", "😐", "😐");
+    emogis.push("🎁", "😶", "😶", "😑", "😑", "😐", "😐", "🙃", "🙃", "🔮");
     emogis = emogis.filter(
       (emogi) => emogi !== "😝" && emogi !== "🤩" && emogi !== "🤑"
+    );
+  }
+  if (fase === 4) {
+    PontosGerarItem = 3; // Aumenta o número de pontos necessários para gerar um item na fase 4
+    paraGanhar = 10; // Define o número de pares necessários para ganhar a fase 4
+    emogis.push("👹", "💀", "💀");
+    emogis.push(
+      "🎁",
+      "🔮",
+      "👁️",
+      "🙁",
+      "🙁",
+      "😟",
+      "😟",
+      "😭",
+      "😭",
+      "😖",
+      "😖",
+      "😢",
+      "😢"
+    );
+    emogis = emogis.filter(
+      (emogi) =>
+        emogi !== "😛" && emogi !== "🧐" && emogi !== "😎" && emogi !== "😏"
+    );
+  }
+  if (fase === 5) {
+    PontosGerarItem = 3; // Aumenta o número de pontos necessários para gerar um item na fase 5
+    paraGanhar = 10; // Define o número de pares necessários para ganhar a fase 4
+    emogis.push("👾", "👾", "💀", "👺");
+    emogis.push(
+      "🔮",
+      "👁️", // o olho vai revelar umas 5 cartas só que só uma vez
+      "😩",
+      "😩",
+      "🤕",
+      "🤕",
+      "😭",
+      "😭",
+      "🤫",
+      "🤫",
+      "😨",
+      "😨"
+    );
+    emogis = emogis.filter(
+      (emogi) =>
+        emogi !== "😑" && emogi !== "😈" && emogi !== "👿" && emogi !== "🙄"
     );
   }
 
@@ -67,8 +122,17 @@ function iniciar() {
 
   for (let i = 0; i < emogisAleatorio.length; i++) {
     let box = document.createElement("div");
-    box.classList.add("item");
-    // box.className = "iten";
+    if (fase >= 5) {
+      box.classList.add("item");
+      box.classList.add("cartaMenorMedia");
+    } else if (fase === 4) {
+      box.classList.add("item");
+      box.classList.add("cartaMenorPouco");
+    } else {
+      box.classList.add("item");
+    }
+
+    // box.className = "item"; // Outra forma de adicionar a classe
     box.innerHTML = emogisAleatorio[i];
     box.onclick = clickCard;
     document.querySelector(".jogo").appendChild(box);
@@ -84,6 +148,7 @@ function iniciar() {
 
   match = 0;
   matchPonto = 0;
+  pontoLanpada = 0;
 
   requestAnimationFrame(verPontos);
   requestAnimationFrame(verVida);
@@ -95,9 +160,18 @@ function clickCard() {
     this.classList.contains("match") ||
     this.classList.contains("emogiMal") ||
     this.classList.contains("presente") ||
-    this.classList.contains("rocha")
+    this.classList.contains("rocha") ||
+    this.classList.contains("cartaVirus") ||
+    this.classList.contains("cartaContaminada") ||
+    this.classList.contains("lupaAtivo") ||
+    this.classList.contains("olhoMagico")
   ) {
     return; // Se já for um par, não faz nada
+  }
+  if (this.classList.contains("lanpada") && pontoLanpada > 1) {
+    pontoLanpada -= 2;
+  } else if (this.classList.contains("lanpada")) {
+    return;
   }
   if (emogiOpen.length < 2) {
     emogiOpen.push(this);
@@ -109,6 +183,16 @@ function clickCard() {
 }
 
 function chackMatch() {
+  if (emogiOpen[0].innerHTML === "👾") {
+    emogiOpen[1].classList.add("cartaContaminada");
+    emogiOpen[0].classList.add("cartaVirus");
+  }
+
+  if (emogiOpen[1].innerHTML === "👾") {
+    emogiOpen[0].classList.add("cartaContaminada");
+    emogiOpen[1].classList.add("cartaVirus");
+  }
+
   if (
     emogiOpen[0].innerHTML == "👿" ||
     emogiOpen[0].innerHTML == "😈" ||
@@ -118,11 +202,13 @@ function chackMatch() {
   ) {
     emogiOpen[0].classList.add("emogiMal");
     emogiMal++;
-
-    if (vidaInfectada > 0) {
-      vidaInfectada--;
-    } else {
-      vida--;
+    if (!emogiOpen[0].classList.contains("cartaContaminada")) {
+      if (vidaInfectada > 0) {
+        vidaInfectada--;
+      } else {
+        document.getElementById(`coracao${vida}`).classList.add("quebrado");
+        vida--;
+      }
     }
   }
 
@@ -136,10 +222,13 @@ function chackMatch() {
     emogiOpen[1].classList.add("emogiMal");
     emogiMal++;
 
-    if (vidaInfectada > 0) {
-      vidaInfectada--;
-    } else {
-      vida--;
+    if (!emogiOpen[1].classList.contains("cartaContaminada")) {
+      if (vidaInfectada > 0) {
+        vidaInfectada--;
+      } else {
+        document.getElementById(`coracao${vida}`).classList.add("quebrado");
+        vida--;
+      }
     }
   }
 
@@ -159,6 +248,50 @@ function chackMatch() {
     emogiOpen[1].classList.add("rocha");
   }
 
+  if (emogiOpen[0].innerHTML === "🔮") {
+    emogiOpen[0].classList.add("lanpada");
+    cartaClassAleatoria("transparente");
+  }
+
+  if (emogiOpen[1].innerHTML === "🔮") {
+    emogiOpen[1].classList.add("lanpada");
+    cartaClassAleatoria("transparente");
+  }
+
+  if (emogiOpen[0].innerHTML === "👁️") {
+    emogiOpen[0].classList.add("olhoMagico");
+    revelarEmogi(5);
+  }
+
+  if (emogiOpen[1].innerHTML === "👁️") {
+    emogiOpen[1].classList.add("olhoMagico");
+    revelarEmogi(5);
+  }
+
+  if (emogiOpen[0].innerHTML === "💀") {
+    emogiOpen[0].classList.add("emogiMal");
+    emogiMal++;
+    if (vidaInfectada > 0) {
+      vidaInfectada -= 2;
+    } else {
+      document.getElementById(`coracao${vida}`).classList.add("quebrado");
+      document.getElementById(`coracao${vida - 1}`).classList.add("quebrado");
+      vida -= 2;
+    }
+  }
+
+  if (emogiOpen[1].innerHTML === "💀") {
+    emogiOpen[1].classList.add("emogiMal");
+    emogiMal++;
+    if (vidaInfectada > 0) {
+      vidaInfectada -= 2;
+    } else {
+      document.getElementById(`coracao${vida}`).classList.add("quebrado");
+      document.getElementById(`coracao${vida - 1}`).classList.add("quebrado");
+      vida -= 2;
+    }
+  }
+
   if (emogiOpen[0] === emogiOpen[1]) {
     emogiOpen = [];
     return; // Se os dois cards forem o mesmo, não faz nada
@@ -168,11 +301,15 @@ function chackMatch() {
     emogiOpen[1].classList.add("match");
     match++;
     matchPonto++;
+    pontoLanpada += 1;
     pontos += 10;
   } else {
     if (emogiOpen[0].classList.contains("emogiMal")) {
     } else if (emogiOpen[0].classList.contains("presente")) {
     } else if (emogiOpen[0].classList.contains("rocha")) {
+    } else if (emogiOpen[0].classList.contains("cartaVirus")) {
+    } else if (emogiOpen[0].classList.contains("cartaContaminada")) {
+    } else if (emogiOpen[0].classList.contains("olhoMagico")) {
     } else {
       emogiOpen[0].classList.remove("virado");
     }
@@ -180,6 +317,9 @@ function chackMatch() {
     if (emogiOpen[1].classList.contains("emogiMal")) {
     } else if (emogiOpen[1].classList.contains("presente")) {
     } else if (emogiOpen[1].classList.contains("rocha")) {
+    } else if (emogiOpen[1].classList.contains("cartaVirus")) {
+    } else if (emogiOpen[1].classList.contains("cartaContaminada")) {
+    } else if (emogiOpen[1].classList.contains("olhoMagico")) {
     } else {
       emogiOpen[1].classList.remove("virado");
     }
@@ -188,18 +328,19 @@ function chackMatch() {
 }
 
 function verVida() {
-  if (vida == 3) {
+  document.getElementById(`coracao${vida}`).classList.add("coracao");
+  if (vida >= 3) {
     document.getElementById("coracao3").classList = "coracao";
     document.getElementById("coracao2").classList = "coracao";
     document.getElementById("coracao1").classList = "coracao";
-  } else if (vida == 2) {
+  } else if (vida >= 2) {
     if (!document.getElementById("coracao3").classList.contains("infectado")) {
       document.getElementById("coracao3").classList = "quebrado";
     }
 
     document.getElementById("coracao2").classList = "coracao";
     document.getElementById("coracao1").classList = "coracao";
-  } else if (vida == 1) {
+  } else if (vida >= 1) {
     if (!document.getElementById("coracao3").classList.contains("infectado")) {
       document.getElementById("coracao3").classList = "quebrado";
     }
@@ -207,7 +348,7 @@ function verVida() {
       document.getElementById("coracao2").classList = "quebrado";
     }
     document.getElementById("coracao1").classList = "coracao";
-  } else if (vida == 0) {
+  } else if (vida <= 0) {
     if (!document.getElementById("coracao3").classList.contains("infectado")) {
       document.getElementById("coracao3").classList = "quebrado";
     }
@@ -235,7 +376,7 @@ function verVida() {
 
 function verPontos() {
   requestAnimationFrame(verItens);
-  if (match == 6) {
+  if (match == paraGanhar) {
     fase++;
     document.getElementById("morte").classList.add("mensagem");
     document.getElementById("morte").innerHTML = ` Você completou a fase ${
@@ -253,7 +394,7 @@ function verPontos() {
 }
 
 function verItens() {
-  if (matchPonto == 2) {
+  if (matchPonto == PontosGerarItem) {
     gerarItem();
     matchPonto = 0;
   }
@@ -261,7 +402,7 @@ function verItens() {
 }
 
 function gerarItem() {
-  let numero = Math.floor(Math.random() * 3) + 1; // Gera um número aleatório entre 1 e 3
+  let numero = Math.floor(Math.random() * 4) + 1; // Gera um número aleatório entre 1 e 3
   if (numero === 1) {
     for (let i = 0; i < listaItens.length; i++) {
       if (listaItens[i] === 0) {
@@ -289,6 +430,15 @@ function gerarItem() {
       }
     }
   }
+  if (numero === 4) {
+    for (let i = 0; i < listaItens.length; i++) {
+      if (listaItens[i] === 0) {
+        listaItens[i] = 4;
+        document.getElementById(`item${i + 1}`).classList.add("transparencia");
+        break;
+      }
+    }
+  }
 }
 
 function usarSlot(slot) {
@@ -310,24 +460,46 @@ function usarSlot(slot) {
     document.getElementById(`item${slot}`).classList.remove("lupa");
     return;
   }
+  if (listaItens[slot - 1] === 4) {
+    usarTransparencia();
+    listaItens[slot - 1] = 0;
+    document.getElementById(`item${slot}`).classList.remove("transparencia");
+    return;
+  }
 }
 
 function usarConsertar() {
   if (vida >= vidaMax) {
+    vidaMax++;
+    if (vidaInfectada > 0) {
+      vida = vidaMax;
+      document.getElementById(`coracao${vida + 1}`).classList.add("infectado");
+    }
+    document.getElementById(`coracao${vida}`).classList.add("coracao");
+
     return; // Não faz nada se a vida já estiver no máximo
   } else if (vidaInfectada > 0) {
     vida = vidaMax;
-    document.getElementById(`coracao4`).classList.add("infectado");
+    document.getElementById(`coracao${vida + 1}`).classList.add("infectado");
   } else {
     vida = vidaMax;
   }
 }
 
 function usarInfecsão() {
-  document.getElementById(`coracao${vida + 1}`).classList.add("infectado");
+  if (vidaInfectada > 2) {
+    document.getElementById(`coracao${vida + 3}`).classList.add("infectado");
+    document.getElementById(`coracao${vida + 3}`).classList.remove("quebrado");
+  } else if (vidaInfectada > 0) {
+    document.getElementById(`coracao${vida + 2}`).classList.add("infectado");
+    document.getElementById(`coracao${vida + 2}`).classList.remove("quebrado");
+  } else {
+    document.getElementById(`coracao${vida + 1}`).classList.add("infectado");
+    document.getElementById(`coracao${vida + 1}`).classList.remove("quebrado");
+  }
+
   vidaInfectada += 2;
   requestAnimationFrame(verInfecsao);
-  document.getElementById(`coracao${vida}`).classList.remove("quebrado");
 }
 
 function verInfecsao() {
@@ -351,4 +523,56 @@ function usarLupa() {
       emogi[i].classList.remove("lupaAtivo");
     }
   }, 2000);
+}
+
+function usarTransparencia() {
+  cartaClassAleatoria("transparente");
+  cartaClassAleatoria("transparente");
+  cartaClassAleatoria("transparente");
+  cartaClassAleatoria("transparente");
+}
+
+function cartaClassAleatoria(funcao) {
+  let cartas = Array.from(document.querySelectorAll(".jogo .item")).filter(
+    (carta) =>
+      !carta.classList.contains("match") &&
+      !carta.classList.contains("emogiMal") &&
+      !carta.classList.contains("presente") &&
+      !carta.classList.contains("rocha") &&
+      !carta.classList.contains("transparente") &&
+      !carta.classList.contains("cartaVirus") &&
+      !carta.classList.contains("cartaContaminada") &&
+      !carta.classList.contains("lupaAtivo") &&
+      !carta.classList.contains("virado") &&
+      !carta.classList.contains("olhoMagico")
+  );
+  if (cartas.length > 0) {
+    let carta = cartas[Math.floor(Math.random() * cartas.length)];
+    carta.classList.add(funcao);
+  }
+}
+
+function revelarEmogi(numero) {
+  let emogi = Array.from(document.querySelectorAll(".jogo .item")).filter(
+    (carta) =>
+      !carta.classList.contains("match") &&
+      !carta.classList.contains("emogiMal") &&
+      !carta.classList.contains("presente") &&
+      !carta.classList.contains("rocha") &&
+      !carta.classList.contains("transparente") &&
+      !carta.classList.contains("cartaVirus") &&
+      !carta.classList.contains("cartaContaminada") &&
+      !carta.classList.contains("lupaAtivo") &&
+      !carta.classList.contains("virado") &&
+      !carta.classList.contains("olhoMagico")
+  );
+  for (let i = 0; i < numero; i++) {
+    if (emogi.length > 0) {
+      let carta = emogi[Math.floor(Math.random() * emogi.length)];
+      carta.classList.add("lupaAtivo");
+      setTimeout(() => {
+        carta.classList.remove("lupaAtivo");
+      }, 3000);
+    }
+  }
 }

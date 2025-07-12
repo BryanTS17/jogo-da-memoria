@@ -13,6 +13,9 @@ let emogis = [
   "🧐",
 ];
 
+const startAudio = new Audio("./src/audios/egyptian_duel.mp3");
+startAudio.loop = false;
+
 let listaItens = [0, 0, 0, 0, 0, 0, 0, 0];
 
 let fase = 1;
@@ -156,6 +159,8 @@ function iniciar() {
 }
 
 function clickCard() {
+  // garante que NÃO repete
+  startAudio.play();
   if (
     this.classList.contains("match") ||
     this.classList.contains("emogiMal") ||
@@ -186,11 +191,15 @@ function chackMatch() {
   if (emogiOpen[0].innerHTML === "👾") {
     emogiOpen[1].classList.add("cartaContaminada");
     emogiOpen[0].classList.add("cartaVirus");
+    const loseAudio = new Audio("./src/audios/lose.wav");
+    loseAudio.play();
   }
 
   if (emogiOpen[1].innerHTML === "👾") {
     emogiOpen[0].classList.add("cartaContaminada");
     emogiOpen[1].classList.add("cartaVirus");
+    const loseAudio = new Audio("./src/audios/lose.wav");
+    loseAudio.play();
   }
 
   if (
@@ -210,6 +219,8 @@ function chackMatch() {
         vida--;
       }
     }
+    const loseAudio = new Audio("./src/audios/lose.wav");
+    loseAudio.play();
   }
 
   if (
@@ -230,6 +241,8 @@ function chackMatch() {
         vida--;
       }
     }
+    const loseAudio = new Audio("./src/audios/lose.wav");
+    loseAudio.play();
   }
 
   if (emogiOpen[0].innerHTML === "🎁") {
@@ -278,6 +291,8 @@ function chackMatch() {
       document.getElementById(`coracao${vida - 1}`).classList.add("quebrado");
       vida -= 2;
     }
+    const loseAudio = new Audio("./src/audios/lose.wav");
+    loseAudio.play();
   }
 
   if (emogiOpen[1].innerHTML === "💀") {
@@ -290,6 +305,8 @@ function chackMatch() {
       document.getElementById(`coracao${vida - 1}`).classList.add("quebrado");
       vida -= 2;
     }
+    const loseAudio = new Audio("./src/audios/lose.wav");
+    loseAudio.play();
   }
 
   if (emogiOpen[0] === emogiOpen[1]) {
@@ -301,6 +318,8 @@ function chackMatch() {
     emogiOpen[1].classList.add("match");
     match++;
     matchPonto++;
+    const WinAudio = new Audio("./src/audios/win.wav");
+    WinAudio.play();
     pontoLanpada += 1;
     pontos += 10;
   } else {
@@ -328,37 +347,36 @@ function chackMatch() {
 }
 
 function verVida() {
-  document.getElementById(`coracao${vida}`).classList.add("coracao");
-  if (vida >= 3) {
-    document.getElementById("coracao3").classList = "coracao";
-    document.getElementById("coracao2").classList = "coracao";
-    document.getElementById("coracao1").classList = "coracao";
-  } else if (vida >= 2) {
-    if (!document.getElementById("coracao3").classList.contains("infectado")) {
-      document.getElementById("coracao3").classList = "quebrado";
-    }
+  const totalCoroes = 10; // Máximo de corações disponíveis no HTML, ajuste se precisar
+  const coracoesVivos = vida;
+  const coracoesInfectados = Math.ceil(vidaInfectada / 2);
 
-    document.getElementById("coracao2").classList = "coracao";
-    document.getElementById("coracao1").classList = "coracao";
-  } else if (vida >= 1) {
-    if (!document.getElementById("coracao3").classList.contains("infectado")) {
-      document.getElementById("coracao3").classList = "quebrado";
-    }
-    if (!document.getElementById("coracao2").classList.contains("infectado")) {
-      document.getElementById("coracao2").classList = "quebrado";
-    }
-    document.getElementById("coracao1").classList = "coracao";
-  } else if (vida <= 0) {
-    if (!document.getElementById("coracao3").classList.contains("infectado")) {
-      document.getElementById("coracao3").classList = "quebrado";
-    }
-    if (!document.getElementById("coracao2").classList.contains("infectado")) {
-      document.getElementById("coracao2").classList = "quebrado";
-    }
-    if (!document.getElementById("coracao1").classList.contains("infectado")) {
-      document.getElementById("coracao1").classList = "quebrado";
-    }
+  // Limpa tudo antes
+  for (let i = 1; i <= totalCoroes; i++) {
+    document.getElementById(`coracao${i}`).className = "";
+  }
 
+  // Marca os corações vivos
+  for (let i = 1; i <= coracoesVivos; i++) {
+    document.getElementById(`coracao${i}`).classList.add("coracao");
+  }
+
+  // Marca os corações infectados depois dos vivos
+  for (
+    let i = coracoesVivos + 1;
+    i <= coracoesVivos + coracoesInfectados;
+    i++
+  ) {
+    document.getElementById(`coracao${i}`).classList.add("infectado");
+  }
+
+  // Marca os quebrados depois
+  for (let i = coracoesVivos + coracoesInfectados + 1; i <= vidaMax; i++) {
+    document.getElementById(`coracao${i}`).classList.add("quebrado");
+  }
+
+  // Verifica morte
+  if (vida <= 0 && coracoesInfectados <= 0) {
     setTimeout(() => {
       document.getElementById("morte").classList.add("mensagem");
       document.getElementById(
@@ -368,9 +386,9 @@ function verVida() {
     setTimeout(() => {
       window.location.reload();
     }, 5000);
-
     return;
   }
+
   requestAnimationFrame(verVida);
 }
 
@@ -379,9 +397,7 @@ function verPontos() {
   if (match == paraGanhar) {
     fase++;
     document.getElementById("morte").classList.add("mensagem");
-    document.getElementById("morte").innerHTML = ` Você completou a fase ${
-      fase - 1
-    }!<br>Você fez ${pontos} pontos!<br>Você encontrou ${match} pares!<br>Você encontrou ${emogiMal} emogis ruins!<br>Prepare-se para a próxima!`;
+    pontuacaoaAnimada(0, pontos);
     setTimeout(iniciar(), 5000);
     setTimeout(() => {
       document.getElementById("morte").classList.remove("mensagem");
@@ -391,6 +407,21 @@ function verPontos() {
     return;
   }
   requestAnimationFrame(verPontos);
+}
+
+function pontuacaoaAnimada(pontuacaoAtual, pontuacaoFinal) {
+  if (pontuacaoAtual < pontuacaoFinal) {
+    if (pontuacaoAtual > pontuacaoFinal) {
+      pontuacaoAtual = pontuacaoFinal;
+    }
+    document.getElementById("morte").innerHTML = ` Você completou a fase ${
+      fase - 1
+    }!<br>Você fez ${pontuacaoAtual} pontos!`;
+    pontuacaoAtual += fase - 1;
+  }
+  requestAnimationFrame(() =>
+    pontuacaoaAnimada(pontuacaoAtual, pontuacaoFinal)
+  );
 }
 
 function verItens() {
@@ -471,34 +502,24 @@ function usarSlot(slot) {
 function usarConsertar() {
   if (vida >= vidaMax) {
     vidaMax++;
-    if (vidaInfectada > 0) {
-      vida = vidaMax;
-      document.getElementById(`coracao${vida + 1}`).classList.add("infectado");
-    }
-    document.getElementById(`coracao${vida}`).classList.add("coracao");
-
-    return; // Não faz nada se a vida já estiver no máximo
-  } else if (vidaInfectada > 0) {
     vida = vidaMax;
-    document.getElementById(`coracao${vida + 1}`).classList.add("infectado");
+    document.getElementById(`coracao${vida}`).classList.add("coracao");
   } else {
     vida = vidaMax;
   }
 }
 
 function usarInfecsão() {
-  if (vidaInfectada > 2) {
-    document.getElementById(`coracao${vida + 3}`).classList.add("infectado");
-    document.getElementById(`coracao${vida + 3}`).classList.remove("quebrado");
-  } else if (vidaInfectada > 0) {
-    document.getElementById(`coracao${vida + 2}`).classList.add("infectado");
-    document.getElementById(`coracao${vida + 2}`).classList.remove("quebrado");
-  } else {
-    document.getElementById(`coracao${vida + 1}`).classList.add("infectado");
-    document.getElementById(`coracao${vida + 1}`).classList.remove("quebrado");
+  vidaInfectada += 2; // Cada uso adiciona +2
+
+  let coracaoInfectadoIndex = vida + Math.ceil(vidaInfectada / 2);
+
+  let coracao = document.getElementById(`coracao${coracaoInfectadoIndex}`);
+  if (coracao) {
+    coracao.classList.add("infectado");
+    coracao.classList.remove("quebrado");
   }
 
-  vidaInfectada += 2;
   requestAnimationFrame(verInfecsao);
 }
 
